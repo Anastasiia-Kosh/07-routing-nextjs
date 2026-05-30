@@ -10,25 +10,24 @@ import NoteList from "@/components/NoteList/NoteList";
 import Modal from "@/components/Modal/Modal";
 import NoteForm from "@/components/NoteForm/NoteForm";
 import Pagination from "@/components/Pagination/Pagination";
-import { useParams } from "next/navigation";
 
 
-const NotesClient = () => {
+interface NotesClientProps {
+  tagSearch: string | undefined;
+}
+
+const NotesClient = ({ tagSearch }: NotesClientProps) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const params = useParams();
-  const tag =
-  Array.isArray(params.slug) &&
-  params.slug[0] !== "all"
-    ? params.slug[0]
-    : undefined;
+
 
 
   const { data } = useQuery({
-    queryKey: ["notes", searchQuery, currentPage, tag],
-    queryFn: () => fetchNotes(searchQuery, currentPage, tag),
+    queryKey: ["notes", searchQuery, currentPage, tagSearch],
+    queryFn: () => fetchNotes(searchQuery, currentPage, tagSearch),
     placeholderData: keepPreviousData,
+     refetchOnMount: false,
   });
   const updateSearchQuery = useDebouncedCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -74,3 +73,4 @@ const NotesClient = () => {
   );
 }
 export default NotesClient
+
